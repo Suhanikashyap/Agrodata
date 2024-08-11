@@ -1,0 +1,243 @@
+import pandas as pd
+import mysql.connector
+from mysql.connector import Error
+
+class Agrodata:
+    def __init__(self):
+        self.user_id = None
+        self.connection = self.create_connection()
+        self.intro_page()
+
+    def create_connection(self):
+        try:
+            connection = mysql.connector.connect(
+                host='localhost',
+                user='your_username',
+                password='your_password',
+                database='agrodata'
+            )
+            if connection.is_connected():
+                print("Successfully connected to the database")
+                return connection
+        except Error as e:
+            print(f"Error: {e}")
+            return None
+
+    def intro_page(self):
+        while True:
+            print("Welcome to Agrodata")
+            print("Your crop, our database")
+            print("1. Login")
+            print("2. Exit")
+
+            choice = input("Enter number: ").strip()
+
+            if choice == '1':
+                self.login()
+                break
+            elif choice == '2':
+                print("Thank you for visiting Agrodata. Goodbye!")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def login(self):
+        email = input("Enter Email: ").strip()
+        password = input("Enter Password: ").strip()
+
+        if email and password:
+            # Mock user authentication
+            self.user_id = email
+            self.show_dashboard()
+        else:
+            print("Please enter both email and password.")
+            self.login()
+
+    def show_dashboard(self):
+        while True:
+            print("\nDashboard")
+            print("1. Crop Database")
+            print("2. Crop Sold Database")
+            print("3. Loan Calculator")
+            print("4. Profit Calculator")
+            print("5. Create Database")
+            print("6. Contact Us")
+            print("7. Exit")
+
+            choice = input("Enter number: ").strip()
+
+            if choice == '1':
+                self.manage_crop_database()
+            elif choice == '2':
+                self.manage_crop_sold_database()
+            elif choice == '3':
+                self.calculate_loan()
+            elif choice == '4':
+                self.calculate_profit()
+            elif choice == '5':
+                self.create_database()
+            elif choice == '6':
+                self.contact_us()
+            elif choice == '7':
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def manage_crop_database(self):
+        while True:
+            print("Crop Database Management")
+            print("1. Add New Crop")
+            print("2. View Existing Crops")
+
+            choice = input("Enter number: ").strip()
+
+            if choice == '1':
+                self.add_new_crop()
+                break
+            elif choice == '2':
+                self.view_existing_crops()
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def add_new_crop(self):
+        crop_name = input("Enter Crop Name: ").strip()
+        crop_type = input("Enter Crop Type: ").strip()
+
+        if crop_name and crop_type:
+            cursor = self.connection.cursor()
+            query = "INSERT INTO crops (name, type) VALUES (%s, %s)"
+            values = (crop_name, crop_type)
+            cursor.execute(query, values)
+            self.connection.commit()
+            print("Crop added successfully.")
+        else:
+            print("Please enter both crop name and type.")
+
+    def view_existing_crops(self):
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM crops"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        df = pd.DataFrame(result, columns=['ID', 'Name', 'Type'])
+        print(df.to_string(index=False))
+
+    def manage_crop_sold_database(self):
+        while True:
+            print("Crop Sold Database Management")
+            print("1. Add New Sale")
+            print("2. View Existing Sales")
+
+            choice = input("Enter number: ").strip()
+
+            if choice == '1':
+                self.add_new_sale()
+                break
+            elif choice == '2':
+                self.view_existing_sales()
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def add_new_sale(self):
+        crop_name = input("Enter Crop Name Sold: ").strip()
+        quantity = float(input("Enter Quantity Sold: ").strip())
+        price = float(input("Enter Price: ").strip())
+
+        if crop_name and quantity and price:
+            cursor = self.connection.cursor()
+            query = "INSERT INTO sales (crop_name, quantity, price) VALUES (%s, %s, %s)"
+            values = (crop_name, quantity, price)
+            cursor.execute(query, values)
+            self.connection.commit()
+            print("Sale added successfully.")
+        else:
+            print("Please enter all details.")
+
+    def view_existing_sales(self):
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM sales"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        df = pd.DataFrame(result, columns=['ID', 'Name', 'Quantity', 'Price'])
+        print(df.to_string(index=False))
+
+    def create_database(self):
+        while True:
+            db_name = input("Enter Database Name: ").strip()
+            if db_name:
+                rows = int(input("Enter Number of Rows: "))
+                columns = int(input("Enter Number of Columns: "))
+
+                column_names = []
+                for i in range(columns):
+                    column_name = input(f"Enter Name of Column {i + 1}: ").strip()
+                    column_names.append(column_name)
+
+                # Stub for creating a new database table
+                print(f"\nDatabase '{db_name}' created with columns: {column_names}")
+
+                while True:
+                    print(f"\nDatabase '{db_name}' created with columns: {column_names}")
+                    print("1. Add New Row")
+                    print("2. View Table")
+                    print("3. Exit to Dashboard")
+
+                    choice = input("Enter number: ").strip()
+
+                    if choice == '1':
+                        self.add_row_to_table(db_name)
+                        break
+                    elif choice == '2':
+                        self.view_table(db_name)
+                        break
+                    elif choice == '3':
+                        break
+                    else:
+                        print("Invalid choice. Please try again.")
+                break
+            else:
+                print("Database creation cancelled.")
+                break
+
+    def add_row_to_table(self, db_name):
+        # Stub for adding a row to a table
+        print(f"Row added to table '{db_name}'.")
+
+    def view_table(self, db_name):
+        # Stub for viewing a table
+        print(f"Viewing table '{db_name}'.")
+        df = pd.DataFrame([
+            # Mock data
+            [1, 'Row1', 'Value1'],
+            [2, 'Row2', 'Value2']
+        ], columns=['ID'] + [f'Column {i + 1}' for i in range(3)])
+        print(df.to_string(index=False))
+
+    def calculate_loan(self):
+        amount = float(input("Enter Loan Amount: ").strip())
+        rate = float(input("Enter Interest Rate (in %): ").strip())
+        years = float(input("Enter Number of Years: ").strip())
+
+        # Simple loan calculation formula
+        total_amount = amount * (1 + rate / 100) ** years
+        print(f"Total Amount to be Repaid: {total_amount:.2f}")
+
+    def calculate_profit(self):
+        cost = float(input("Enter Total Cost: ").strip())
+        revenue = float(input("Enter Total Revenue: ").strip())
+
+        # Simple profit calculation
+        profit = revenue - cost
+        print(f"Profit: {profit:.2f}")
+
+    def contact_us(self):
+        print("Contact Us")
+        print("Email: contact@agrodata.com")
+
+# Instantiate and run the Agrodata application
+if __name__ == "__main__":
+    app = Agrodata()
+
+
+Explain the code segments in simple English and not it's pages like 
