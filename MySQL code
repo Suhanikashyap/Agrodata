@@ -1,0 +1,25 @@
+pip install mysql-connector-python
+
+CREATE DATABASE agrodata;
+
+USE agrodata;
+
+CREATE TABLE crops (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE sales (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    crop_name VARCHAR(255) NOT NULL,
+    quantity FLOAT NOT NULL,
+    price FLOAT NOT NULL
+);
+
+CREATE TABLE custom_db (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    column1 VARCHAR(255),
+    column2 VARCHAR(255),
+    -- Add more columns as needed
+);
